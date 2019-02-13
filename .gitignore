@@ -1,0 +1,8 @@
+bot.properties
+
+target/
+
+.settings/
+.vscode/
+.idea/
+*.iml
