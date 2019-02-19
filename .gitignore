@@ -6,3 +6,4 @@ target/
 .vscode/
 .idea/
 *.iml
+.attach_pid*

@@ -1,0 +1,6 @@
+
+nick = thermostatbot
+username = thermostatbot
+password = passwd
+server = irc.oftc.net
+channels = #jmc
