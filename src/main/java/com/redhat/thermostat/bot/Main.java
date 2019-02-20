@@ -10,7 +10,6 @@ import org.pircbotx.PircBotX;
 import org.pircbotx.exception.IrcException;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.ConnectEvent;
-import org.pircbotx.hooks.types.GenericEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import java.io.IOException;
@@ -38,6 +37,7 @@ public class Main extends ListenerAdapter{
                 .addAutoJoinChannels(Arrays.asList(channels))
                 .setAutoReconnect(true)
                 .addListener(new Main())
+                .addListener(new BugInfo())
                 .buildConfiguration();
 
         PircBotX bot = new PircBotX(botConfiguration);
@@ -75,10 +75,6 @@ public class Main extends ListenerAdapter{
 
     @Override
     public void onGenericMessage(final GenericMessageEvent event) {
-        logger.debug("msg received: " + event.getMessage());
-        if (event.getMessage().startsWith("?helloworld")) {
-            logger.info("Responding to ?helloworld");
-        }
-        event.respond("Hello world!");
+        logger.debug(String.format("[%s] %s", event.getUser().getNick(), event.getMessage()));
     }
 }
