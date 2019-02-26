@@ -13,6 +13,7 @@ import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 import org.pircbotx.hooks.ListenerAdapter;
+import org.pircbotx.hooks.events.PrivateMessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import java.net.URI;
@@ -26,10 +27,10 @@ import java.util.regex.Pattern;
 
 public class BugInfo extends ListenerAdapter {
 
-    static Logger logger = Logger.getLogger(BugInfo.class);
+    private static Logger logger = Logger.getLogger(BugInfo.class);
 
-    private static final Pattern openjdkBugPattern = Pattern.compile("\\b(?<prefix>(JDK|JMC))(-| )?(?<bugId>\\d{1,10})\\b", Pattern.CASE_INSENSITIVE);
-    private static final Pattern redhatBugPattern = Pattern.compile("\\b(RH)(BZ)?(-| )?(?<bugId>\\d{1,10})\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern openjdkBugPattern = Pattern.compile("\\b(?<prefix>(JDK|JMC))([- ])?(?<bugId>\\d{1,10})\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern redhatBugPattern = Pattern.compile("\\b(RH)(BZ)?([- ])?(?<bugId>\\d{1,10})\\b", Pattern.CASE_INSENSITIVE);
     private static final Pattern icedteaBugPattern = Pattern.compile("\\b[Pp][Rr] *(?<bugId>\\d{1,6})\\b", Pattern.CASE_INSENSITIVE);
 
     private static final String OPENJDK_BUG_URL = "https://bugs.openjdk.java.net/browse/%s-%s";
@@ -49,14 +50,14 @@ public class BugInfo extends ListenerAdapter {
     private static final XmlRpcClient icedteaBugzillaClient = new XmlRpcClient();
 
     static class Bug {
-        public final String prefix;
-        public final String id;
-        public final String description;
-        public final String url;
-        public final String product;
-        public final String component;
+        final String prefix;
+        final String id;
+        final String description;
+        final String url;
+        final String product;
+        final String component;
 
-        public Bug(String prefix, String id, String description, String url, String product, String component) {
+        Bug(String prefix, String id, String description, String url, String product, String component) {
             this.prefix = prefix;
             this.id = id;
             this.description = description;
@@ -67,7 +68,7 @@ public class BugInfo extends ListenerAdapter {
 
         @Override
         public String toString() {
-            if (url == "") {
+            if (url.equals("")) {
                 return String.format("%s-%s: %s", prefix, id, description);
             } else {
                 return String.format("[%s][%s] %s-%s: %s (%s)", product, component, prefix, id, description, url);
@@ -101,11 +102,10 @@ public class BugInfo extends ListenerAdapter {
     @Override
     public void onGenericMessage(final GenericMessageEvent event) {
         // only speak when spoken to
-        if (event.getMessage().toLowerCase().contains(event.getBot().getNick().toLowerCase())) {
-
-            Matcher openjdkMatcher = openjdkBugPattern.matcher( event.getMessage() );
-            Matcher redhatMatcher = redhatBugPattern.matcher( event.getMessage() );
-            Matcher icedteaMatcher = icedteaBugPattern.matcher( event.getMessage() );
+        if (event instanceof PrivateMessageEvent || event.getMessage().toLowerCase().contains(event.getBot().getNick().toLowerCase())) {
+            Matcher openjdkMatcher = openjdkBugPattern.matcher(event.getMessage());
+            Matcher redhatMatcher = redhatBugPattern.matcher(event.getMessage());
+            Matcher icedteaMatcher = icedteaBugPattern.matcher(event.getMessage());
 
             if (openjdkMatcher.find()) {
                 handleOpenjdkBug(event, openjdkMatcher);
@@ -131,10 +131,11 @@ public class BugInfo extends ListenerAdapter {
             summary = issue.getSummary();
             url = String.format(OPENJDK_BUG_URL, prefix, bugId);
             product = issue.getProject().getName();
+            StringBuilder componentBuilder = new StringBuilder();
             for (BasicComponent comp: issue.getComponents()) {
-                component += comp.getName() + " ";
+                componentBuilder.append(comp.getName()).append(" ");
             }
-            component = component.trim();
+            component = componentBuilder.toString().trim();
         } catch (RestClientException e) {
             if (e.getMessage().contains("org.codehaus.jettison.json.JSONException")) { // JIRA Client timed out
                 System.out.println("Re-initializing JIRA Client...");
@@ -146,8 +147,9 @@ public class BugInfo extends ListenerAdapter {
         } catch (Exception err) {
             summary = err.getMessage().replaceAll("\n", " ");
         }
-        Bug openjdkBug = new Bug(prefix, bugId, summary, url, product, component);
-        event.respondWith(openjdkBug.toString());
+        String reply = new Bug(prefix, bugId, summary, url, product, component).toString();
+        logger.info(String.format("[%s] %s", event.getBot().getNick(), reply));
+        event.respondWith(reply);
     }
 
     private void handleRedhatBug(GenericMessageEvent event, Matcher matcher) {
@@ -165,21 +167,26 @@ public class BugInfo extends ListenerAdapter {
             String url = String.format(REDHAT_BUG_URL, bugId);
             String component = (String) ((Object[])((Map<?,?>)responseBugs[0]).get("component"))[0];
             String product = (String) ((Map<?,?>)responseBugs[0]).get("product");
-            event.respondWith(new Bug("RH", bugId, summary, url, product, component).toString());
+            String reply = new Bug("RH", bugId, summary, url, product, component).toString();
+            logger.info(String.format("[%s] %s", event.getBot().getNick(), reply));
+            event.respondWith(reply);
         } catch (XmlRpcException e) {
             String errMsg = e.getMessage();
             if (errMsg.contains("does not exist")) {
-                event.respondWith(String.format("Red Hat bug #%s does not exist", bugId));
+                String reply = String.format("Red Hat bug #%s does not exist", bugId);
+                logger.info(String.format("[%s] %s", event.getBot().getNick(), reply));
+                event.respondWith(reply);
             } else {
                 logger.error(errMsg);
             }
         } catch (ArrayIndexOutOfBoundsException e) {
-            event.respondWith(String.format("Red Hat bug #%s not found", bugId));
+            String reply = String.format("Red Hat bug #%s not found", bugId);
+            logger.info(String.format("[%s] %s", event.getBot().getNick(), reply));
+            event.respondWith(reply);
         } catch (Exception e) {
             String errMsg = e.getMessage();
             logger.error(errMsg);
         }
-
     }
 
     private void handleIcedteaBug(GenericMessageEvent event, Matcher matcher) {
@@ -198,11 +205,15 @@ public class BugInfo extends ListenerAdapter {
             String url = String.format(ICEDTEA_BUG_URL, bugId);
             String component = (String) ((Map<?,?>)responseBugs[0]).get("component");
             String product = (String) ((Map<?,?>)responseBugs[0]).get("product");
-            event.respondWith(new Bug("PR", bugId, summary, url, product, component).toString());
+            String reply = new Bug("PR", bugId, summary, url, product, component).toString();
+            logger.info(String.format("[%s] %s", event.getBot().getNick(), reply));
+            event.respondWith(reply);
         } catch (XmlRpcException e) {
             String errMsg = e.getMessage();
             if (errMsg.contains("does not exist")) {
-                event.respondWith(String.format("Iced Tea bug #%s does not exist", bugId));
+                String reply = String.format("Iced Tea bug #%s does not exist", bugId);
+                logger.info(String.format("[%s] %s", event.getBot().getNick(), reply));
+                event.respondWith(reply);
             } else {
                 logger.error(errMsg);
             }
@@ -211,6 +222,4 @@ public class BugInfo extends ListenerAdapter {
             System.err.println(errMsg);
         }
     }
-
-
 }

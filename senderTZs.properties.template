@@ -1,0 +1,10 @@
+# This file stores nick/timzone information to figure out the time if
+# the user mentions a time without any timezone information.
+#
+# The contents of the actual file are not stored in the repository
+# because it's personal information.
+#
+# The format is:
+#   nick = timezone
+# For example:
+#   foo = America/New_York

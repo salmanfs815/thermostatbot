@@ -18,6 +18,9 @@ import java.util.Arrays;
 public class Main extends ListenerAdapter{
 
     static Logger logger = Logger.getLogger(Main.class);
+
+    private static final String BOT_CONFIG_FILE = "bot.properties";
+
     private static org.apache.commons.configuration2.Configuration propertiesConfig = getPropertiesConfig();
 
     public static void main(String[] args) {
@@ -38,6 +41,7 @@ public class Main extends ListenerAdapter{
                 .setAutoReconnect(true)
                 .addListener(new Main())
                 .addListener(new BugInfo())
+                .addListener(new TimeZone())
                 .buildConfiguration();
 
         PircBotX bot = new PircBotX(botConfiguration);
@@ -48,17 +52,12 @@ public class Main extends ListenerAdapter{
             logger.error(e.getMessage());
             System.exit(1);
         }
-        if (bot.isConnected()) {
-            logger.info("Connected to server!");
-        } else {
-            logger.info("Not yet connected to server.");
-        }
     }
 
     private static org.apache.commons.configuration2.Configuration getPropertiesConfig() {
         Parameters params = new Parameters();
         FileBasedConfigurationBuilder<FileBasedConfiguration> builder = new FileBasedConfigurationBuilder<FileBasedConfiguration>(
-                PropertiesConfiguration.class).configure(params.properties().setFileName("bot.properties"));
+                PropertiesConfiguration.class).configure(params.properties().setFileName(BOT_CONFIG_FILE));
         org.apache.commons.configuration2.Configuration propertiesConfig = null;
         try {
             propertiesConfig = builder.getConfiguration();
@@ -75,6 +74,6 @@ public class Main extends ListenerAdapter{
 
     @Override
     public void onGenericMessage(final GenericMessageEvent event) {
-        logger.debug(String.format("[%s] %s", event.getUser().getNick(), event.getMessage()));
+        logger.info(String.format("[%s] %s", event.getUser().getNick(), event.getMessage()));
     }
 }
