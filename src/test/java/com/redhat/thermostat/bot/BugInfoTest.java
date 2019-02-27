@@ -16,7 +16,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SuppressWarnings("ResultOfMethodCallIgnored")
 public class BugInfoTest {
 
     private static String botNick = "thermostatbot";
@@ -104,7 +103,7 @@ public class BugInfoTest {
         String ircmsg = "jmc5385";
         when(msgEvent.getMessage()).thenReturn(ircmsg);
         bugInfo.onGenericMessage(msgEvent);
-        verify(msgEvent, times(0));
+        verify(msgEvent, times(0)).respondWith("");
     }
 
     @Test
@@ -112,7 +111,7 @@ public class BugInfoTest {
         String ircmsg = botNick + ", " + "jmc  5385";
         when(msgEvent.getMessage()).thenReturn(ircmsg);
         bugInfo.onGenericMessage(msgEvent);
-        verify(msgEvent, times(0));
+        verify(msgEvent, times(0)).respondWith("");
     }
 
     @Test
@@ -120,7 +119,7 @@ public class BugInfoTest {
         String ircmsg = botNick + ", " + "openjdk11";
         when(msgEvent.getMessage()).thenReturn(ircmsg);
         bugInfo.onGenericMessage(msgEvent);
-        verify(msgEvent, times(0));
+        verify(msgEvent, times(0)).respondWith("");
     }
 
     @Test
@@ -164,7 +163,7 @@ public class BugInfoTest {
         String ircmsg = "jdk8219772";
         when(msgEvent.getMessage()).thenReturn(ircmsg);
         bugInfo.onGenericMessage(msgEvent);
-        verify(msgEvent, times(0));
+        verify(msgEvent, times(0)).respondWith("");
     }
 
     @Test
@@ -172,7 +171,7 @@ public class BugInfoTest {
         String ircmsg = botNick + ", " + "jdk    8219772";
         when(msgEvent.getMessage()).thenReturn(ircmsg);
         bugInfo.onGenericMessage(msgEvent);
-        verify(msgEvent, times(0));
+        verify(msgEvent, times(0)).respondWith("");
     }
 
     @Test
@@ -180,7 +179,7 @@ public class BugInfoTest {
         String ircmsg = botNick + ", " + "OracleJDK 11";
         when(msgEvent.getMessage()).thenReturn(ircmsg);
         bugInfo.onGenericMessage(msgEvent);
-        verify(msgEvent, times(0));
+        verify(msgEvent, times(0)).respondWith("");
     }
 
     @Test
@@ -239,7 +238,7 @@ public class BugInfoTest {
         String ircmsg = "rh 1234";
         when(msgEvent.getMessage()).thenReturn(ircmsg);
         bugInfo.onGenericMessage(msgEvent);
-        verify(msgEvent, times(0));
+        verify(msgEvent, times(0)).respondWith("");
     }
 
     @Test
@@ -247,7 +246,7 @@ public class BugInfoTest {
         String ircmsg = botNick + ", " + "rhbz      1234";
         when(msgEvent.getMessage()).thenReturn(ircmsg);
         bugInfo.onGenericMessage(msgEvent);
-        verify(msgEvent, times(0));
+        verify(msgEvent, times(0)).respondWith("");
     }
 
     @Test
@@ -312,6 +311,6 @@ public class BugInfoTest {
             when(msgEvent.getMessage()).thenReturn(botNick + ", " + query);
             bugInfo.onGenericMessage(msgEvent);
         }
-        verify(msgEvent, times(0));
+        verify(msgEvent, times(0)).respondWith("");
     }
 }

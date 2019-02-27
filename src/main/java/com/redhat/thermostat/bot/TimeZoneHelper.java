@@ -44,9 +44,9 @@ class TimeZoneHelper {
     private static final DateTimeFormatter defaultTimeFormat = DateTimeFormatter.ofPattern("H:m");
     private static final DateTimeFormatter shortTimeZoneFormat = DateTimeFormatter.ofPattern("z");
 
-    private Map<String, ZoneId> senderTZs = getSenderTZs();
+    static Map<String, ZoneId> senderTZs = getSenderTZs();
 
-    private Map<String, ZoneId> getSenderTZs() {
+    private static Map<String, ZoneId> getSenderTZs() {
         Map<String, ZoneId> tzMap = new HashMap<>();
         Properties prop = new Properties();
         InputStream input = null;
@@ -94,7 +94,11 @@ class TimeZoneHelper {
             String tz = tzMatcher.group().toUpperCase();
             if (tz.startsWith("(")) tz = tz.substring(1);
             if (tz.endsWith(")")) tz = tz.substring(0, tz.length() - 1);
-            timezone = ZoneId.of(ZoneId.SHORT_IDS.get(tz));
+            if (ZoneId.SHORT_IDS.containsKey(tz)) {
+                timezone = ZoneId.of(ZoneId.SHORT_IDS.get(tz));
+            } else {
+                timezone = senderTZs.getOrDefault(sender, DEFAULT_TZ);
+            }
         } else timezone = senderTZs.getOrDefault(sender, DEFAULT_TZ);
         int hrs;
         int idxColon = timeString.indexOf(":");
