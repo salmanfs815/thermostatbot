@@ -1,5 +1,5 @@
 # ThermostatBot
-IRC Bot for Red Hat's OpenJDK team
+IRC Bot for Red Hat's Thermostat/JMC team
 
 ---
 
@@ -22,7 +22,7 @@ mvn package
 Configure bot properties and sender timezones:
 ```bash
 cp bot.properties.template bot.properties
-vim senderTZs.prope/home/sasiddiq/thermostatbot/target/classesrties
+vim senderTZs.properties
 cp senderTZs.properties.template senderTZs.properties
 vim senderTZs.properties
 ```  
