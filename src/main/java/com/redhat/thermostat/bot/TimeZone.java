@@ -17,7 +17,7 @@ public class TimeZone extends ListenerAdapter {
 
     private TimeZoneHelper tzHelper;
 
-    public TimeZone() {
+    TimeZone() {
         tzHelper = new TimeZoneHelper();
     }
 

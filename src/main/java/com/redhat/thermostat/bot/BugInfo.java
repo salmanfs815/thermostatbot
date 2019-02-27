@@ -76,7 +76,7 @@ public class BugInfo extends ListenerAdapter {
         }
     }
 
-    public BugInfo() {
+    BugInfo() {
         try {
             jiraUri = new URI(JIRA_URL);
             initializeJiraClient();

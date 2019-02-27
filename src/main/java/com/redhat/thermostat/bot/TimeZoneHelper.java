@@ -42,7 +42,7 @@ class TimeZoneHelper {
 
     private static final DateTimeFormatter queryTimeFormat = DateTimeFormatter.ofPattern("H:mZ");
     private static final DateTimeFormatter defaultTimeFormat = DateTimeFormatter.ofPattern("H:m");
-    private static final DateTimeFormatter shortTimeZone = DateTimeFormatter.ofPattern("z");
+    private static final DateTimeFormatter shortTimeZoneFormat = DateTimeFormatter.ofPattern("z");
 
     private Map<String, ZoneId> senderTZs = getSenderTZs();
 
@@ -52,10 +52,6 @@ class TimeZoneHelper {
         InputStream input = null;
         try {
             input = new FileInputStream(SENDER_TIMEZONES_FILE);
-            if (input == null) {
-                logger.warn("File " + SENDER_TIMEZONES_FILE + " not found. Unable to load sender timezones.");
-                return tzMap;
-            }
             prop.load(input);
             Enumeration<?> e = prop.propertyNames();
             while (e.hasMoreElements()) {
@@ -66,6 +62,7 @@ class TimeZoneHelper {
             }
         } catch (IOException e) {
             logger.error(e.getMessage());
+            logger.warn("File " + SENDER_TIMEZONES_FILE + " not found. Unable to load sender timezones.");
         } finally {
             if (input != null) {
                 try {
@@ -120,11 +117,11 @@ class TimeZoneHelper {
         StringBuilder sb = new StringBuilder();
         sb.append(queryTime.format(queryTimeFormat) + " -- ");
         ZonedDateTime CET = queryTime.withZoneSameInstant(CENTRAL_EUROPE);
-        sb.append(String.format("Munich/Brno (%s): %s | ", CET.format(shortTimeZone), CET.format(defaultTimeFormat)));
+        sb.append(String.format("Munich/Brno (%s): %s | ", CET.format(shortTimeZoneFormat), CET.format(defaultTimeFormat)));
         ZonedDateTime EST = queryTime.withZoneSameInstant(EASTERN_NA);
-        sb.append(String.format("Toronto (%s): %s | ", EST.format(shortTimeZone), EST.format(defaultTimeFormat)));
+        sb.append(String.format("Toronto (%s): %s | ", EST.format(shortTimeZoneFormat), EST.format(defaultTimeFormat)));
         ZonedDateTime GMT = queryTime.withZoneSameInstant(UK);
-        sb.append(String.format("London (%s): %s", GMT.format(shortTimeZone), GMT.format(defaultTimeFormat)));
+        sb.append(String.format("London (%s): %s", GMT.format(shortTimeZoneFormat), GMT.format(defaultTimeFormat)));
         return sb.toString();
     }
 }
