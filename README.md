@@ -1,6 +1,7 @@
 # ThermostatBot
 IRC Bot for Red Hat's Thermostat/JMC team
 
+[![Build Status](https://travis-ci.org/salmanfs815/thermostatbot.svg?branch=master)](https://travis-ci.org/salmanfs815/thermostatbot)
 ---
 
 Clone repo:
