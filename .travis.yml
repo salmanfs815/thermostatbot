@@ -2,4 +2,5 @@ os: linux
 dist: xenial
 language: java
 jdk: openjdk11
+install: true
 script: mvn verify

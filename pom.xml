@@ -76,6 +76,12 @@
                 <version>1.2.1</version>
                 <configuration>
                     <mainClass>com.redhat.thermostat.bot.Main</mainClass>
+                    <systemProperties>
+                        <systemProperty>
+                            <key>log4j.configurationFile</key>
+                            <value>src/main/resources/log4j.properties</value>
+                        </systemProperty>
+                    </systemProperties>
                 </configuration>
             </plugin>
         </plugins>

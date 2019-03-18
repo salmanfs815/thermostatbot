@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -45,6 +46,16 @@ class TimeZoneHelper {
     private static final DateTimeFormatter shortTimeZoneFormat = DateTimeFormatter.ofPattern("z");
 
     static Map<String, ZoneId> senderTZs = getSenderTZs();
+
+    private final Clock clock;
+
+    TimeZoneHelper() {
+        clock = Clock.system(DEFAULT_TZ);
+    }
+
+    TimeZoneHelper(Clock c){
+        clock = c;
+    }
 
     private static Map<String, ZoneId> getSenderTZs() {
         Map<String, ZoneId> tzMap = new HashMap<>();
@@ -112,14 +123,14 @@ class TimeZoneHelper {
         if (ampmMatcher.find() && timeString.toUpperCase().contains("PM")) {
             hrs = (hrs + 12) % 24;
         }
-        LocalDate localDate = LocalDate.now(timezone);
+        LocalDate localDate = LocalDate.now(clock);
         LocalTime localTime = LocalTime.of(hrs, mins, 0);
         return ZonedDateTime.of(localDate, localTime, timezone);
     }
 
     private String getLocalTimes(ZonedDateTime queryTime) {
         StringBuilder sb = new StringBuilder();
-        sb.append(queryTime.format(queryTimeFormat) + " -- ");
+        sb.append(queryTime.format(queryTimeFormat)).append(" -- ");
         ZonedDateTime CET = queryTime.withZoneSameInstant(CENTRAL_EUROPE);
         sb.append(String.format("Munich/Brno (%s): %s | ", CET.format(shortTimeZoneFormat), CET.format(defaultTimeFormat)));
         ZonedDateTime EST = queryTime.withZoneSameInstant(EASTERN_NA);

@@ -6,5 +6,6 @@
 #
 # The format is:
 #   nick = timezone
+#
 # For example:
-#   foo = America/New_York
+salman = America/Toronto

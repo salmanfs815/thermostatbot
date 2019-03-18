@@ -8,7 +8,10 @@ import org.pircbotx.User;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.events.PrivateMessageEvent;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -31,6 +34,7 @@ public class TimeZoneTest {
         String channel = "#jmc";
         String userNick = "sasiddiq";
         String userTimeZone = "America/Toronto";
+        ZoneId userZoneId = ZoneId.of(userTimeZone);
 
         PircBotX bot = mock(PircBotX.class);
         when(bot.getNick()).thenReturn(botNick);
@@ -51,9 +55,13 @@ public class TimeZoneTest {
         when(privMsgEvent.getUser()).thenReturn(user);
 
         TimeZoneHelper.senderTZs = new HashMap<>();
-        TimeZoneHelper.senderTZs.put(userNick, ZoneId.of(userTimeZone));
+        TimeZoneHelper.senderTZs.put(userNick, userZoneId);
 
-        timeZone = new TimeZone();
+        Calendar cal = Calendar.getInstance();
+        cal.set(2019, Calendar.JANUARY, 1);
+        Clock clock = Clock.fixed(Instant.ofEpochMilli(cal.getTimeInMillis()), userZoneId);
+
+        timeZone = new TimeZone(clock);
     }
 
     @Test

@@ -23,7 +23,7 @@ mvn package
 Configure bot properties and sender timezones:
 ```bash
 cp bot.properties.template bot.properties
-vim senderTZs.properties
+vim bot.properties
 cp senderTZs.properties.template senderTZs.properties
 vim senderTZs.properties
 ```  

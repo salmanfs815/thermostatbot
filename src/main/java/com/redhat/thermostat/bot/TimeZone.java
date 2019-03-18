@@ -5,6 +5,7 @@ import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.PrivateMessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
+import java.time.Clock;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,6 +20,10 @@ public class TimeZone extends ListenerAdapter {
 
     TimeZone() {
         tzHelper = new TimeZoneHelper();
+    }
+
+    TimeZone(Clock clock) {
+        tzHelper = new TimeZoneHelper(clock);
     }
 
     @Override

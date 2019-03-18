@@ -4,6 +4,7 @@ import org.apache.commons.configuration2.FileBasedConfiguration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.log4j.Logger;
 import org.pircbotx.PircBotX;
@@ -17,14 +18,13 @@ import java.util.Arrays;
 
 public class Main extends ListenerAdapter{
 
-    static Logger logger = Logger.getLogger(Main.class);
+    private static Logger logger = Logger.getLogger(Main.class);
 
     private static final String BOT_CONFIG_FILE = "bot.properties";
 
     private static org.apache.commons.configuration2.Configuration propertiesConfig = getPropertiesConfig();
 
     public static void main(String[] args) {
-
         String nick = propertiesConfig.getString("nick");
         String username = propertiesConfig.getString("username");
         String password = propertiesConfig.getString("password");
@@ -56,8 +56,10 @@ public class Main extends ListenerAdapter{
 
     private static org.apache.commons.configuration2.Configuration getPropertiesConfig() {
         Parameters params = new Parameters();
-        FileBasedConfigurationBuilder<FileBasedConfiguration> builder = new FileBasedConfigurationBuilder<FileBasedConfiguration>(
-                PropertiesConfiguration.class).configure(params.properties().setFileName(BOT_CONFIG_FILE));
+        FileBasedConfigurationBuilder<FileBasedConfiguration> builder =
+                new FileBasedConfigurationBuilder<FileBasedConfiguration>(
+                        PropertiesConfiguration.class).configure(params.properties()
+                        .setFileName(BOT_CONFIG_FILE).setListDelimiterHandler(new DefaultListDelimiterHandler(' ')));
         org.apache.commons.configuration2.Configuration propertiesConfig = null;
         try {
             propertiesConfig = builder.getConfiguration();

@@ -1,3 +1,10 @@
+# nick - IRC nickname
+# username - login for USERSERV
+# password - password for USERSERV login
+# server - URL for server, optional port specification
+# channels - space-separated list of channels to join
+
+# IMPORTANT: do NOT commit bot.properties to version control
 
 nick = thermostatbot
 username = thermostatbot
