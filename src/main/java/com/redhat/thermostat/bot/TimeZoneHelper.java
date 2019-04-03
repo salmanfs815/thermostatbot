@@ -41,8 +41,8 @@ class TimeZoneHelper {
     private static final ZoneId UK = ZoneId.of("Europe/London"); // London
     private static final ZoneId DEFAULT_TZ = EASTERN_NA;
 
-    private static final DateTimeFormatter queryTimeFormat = DateTimeFormatter.ofPattern("H:mZ");
-    private static final DateTimeFormatter defaultTimeFormat = DateTimeFormatter.ofPattern("H:m");
+    private static final DateTimeFormatter queryTimeFormat = DateTimeFormatter.ofPattern("H:mmZ");
+    private static final DateTimeFormatter defaultTimeFormat = DateTimeFormatter.ofPattern("H:mm");
     private static final DateTimeFormatter shortTimeZoneFormat = DateTimeFormatter.ofPattern("z");
 
     static Map<String, ZoneId> senderTZs = getSenderTZs();
