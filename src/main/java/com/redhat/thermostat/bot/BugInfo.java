@@ -1,13 +1,12 @@
 package com.redhat.thermostat.bot;
 
-import com.atlassian.jira.rest.client.JiraRestClient;
-import com.atlassian.jira.rest.client.JiraRestClientFactory;
-import com.atlassian.jira.rest.client.RestClientException;
+import com.atlassian.jira.rest.client.api.JiraRestClient;
+import com.atlassian.jira.rest.client.api.JiraRestClientFactory;
+import com.atlassian.jira.rest.client.api.RestClientException;
+import com.atlassian.jira.rest.client.api.domain.BasicComponent;
+import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.auth.AnonymousAuthenticationHandler;
-import com.atlassian.jira.rest.client.domain.BasicComponent;
-import com.atlassian.jira.rest.client.domain.Issue;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
-import com.atlassian.util.concurrent.Promise;
 import org.apache.log4j.Logger;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
@@ -120,14 +119,12 @@ public class BugInfo extends ListenerAdapter {
     private void handleOpenjdkBug(GenericMessageEvent event, Matcher matcher) {
         String prefix = matcher.group("prefix").toUpperCase();
         String bugId = matcher.group("bugId");
-        String summary = "";
+        String summary;
         String url = "";
         String product = "";
         String component = "";
         try {
-            Promise<Issue> promise = jiraClient.getIssueClient().getIssue(String.format("%s-%s", prefix, bugId));
-            Issue issue = promise.claim();
-
+            Issue issue = jiraClient.getIssueClient().getIssue(String.format("%s-%s", prefix, bugId)).claim();
             summary = issue.getSummary();
             url = String.format(OPENJDK_BUG_URL, prefix, bugId);
             product = issue.getProject().getName();
@@ -141,8 +138,14 @@ public class BugInfo extends ListenerAdapter {
                 System.out.println("Re-initializing JIRA Client...");
                 initializeJiraClient();
                 handleOpenjdkBug(event, matcher);
+                return;
             } else {
-                summary = e.getMessage().replaceAll("\n", " ");
+                StringBuilder sb = new StringBuilder();
+                e.getErrorCollections().forEach(errorCollection -> errorCollection.getErrorMessages().forEach(errMsg -> sb.append(" ").append(errMsg)));
+                if(sb.length() > 0) {
+                    sb.deleteCharAt(0);
+                }
+                summary = sb.toString();
             }
         } catch (Exception err) {
             summary = err.getMessage().replaceAll("\n", " ");

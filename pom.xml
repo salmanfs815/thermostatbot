@@ -12,7 +12,7 @@
     <repositories>
         <repository>
             <id>atlassian-public</id>
-            <url>https://maven.atlassian.com/content/repositories/atlassian-public/</url>
+            <url>https://packages.atlassian.com/maven/repository/public</url>
         </repository>
     </repositories>
     <dependencies>
@@ -54,8 +54,13 @@
         </dependency>
         <dependency>
             <groupId>com.atlassian.jira</groupId>
-            <artifactId>jira-rest-java-client</artifactId>
-            <version>2.0.0-m2</version>
+            <artifactId>jira-rest-java-client-core</artifactId>
+            <version>4.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.fugue</groupId>
+            <artifactId>fugue</artifactId>
+            <version>2.6.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.xmlrpc</groupId>
@@ -66,6 +71,21 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>2.24.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.8</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpasyncclient</artifactId>
+            <version>4.1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpasyncclient-cache</artifactId>
+            <version>4.1.4</version>
         </dependency>
     </dependencies>
     <build>
