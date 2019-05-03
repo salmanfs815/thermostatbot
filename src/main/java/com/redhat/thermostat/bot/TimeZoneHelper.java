@@ -9,6 +9,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Enumeration;
@@ -105,7 +106,11 @@ class TimeZoneHelper {
             String tz = tzMatcher.group().toUpperCase();
             if (tz.startsWith("(")) tz = tz.substring(1);
             if (tz.endsWith(")")) tz = tz.substring(0, tz.length() - 1);
-            if (ZoneId.SHORT_IDS.containsKey(tz)) {
+            if (tz.equals("CET") || tz.equals("CEST")) { // Central European (Summer) Time
+                timezone = CENTRAL_EUROPE;
+            } else if (tz.equals("BST")) { // British Summer Time (as opposed to Bangladesh Standard Time)
+                timezone = ZoneId.ofOffset("UTC", ZoneOffset.ofHours(+1));
+            } else if (ZoneId.SHORT_IDS.containsKey(tz)) {
                 timezone = ZoneId.of(ZoneId.SHORT_IDS.get(tz));
             } else {
                 timezone = senderTZs.getOrDefault(sender, DEFAULT_TZ);
