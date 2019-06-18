@@ -77,5 +77,30 @@ public class Main extends ListenerAdapter{
     @Override
     public void onGenericMessage(final GenericMessageEvent event) {
         logger.info(String.format("[%s] %s", event.getUser().getNick(), event.getMessage()));
+
+        String msg = event.getMessage().toLowerCase();
+        String botNick = event.getBot().getNick().toLowerCase();
+        if (msg.contains(botNick) && msg.contains("help")) {
+            displayHelp(event);
+        }
+    }
+
+    private void displayHelp(GenericMessageEvent event) {
+        String helpMsg =
+                "So as to not disturb your conversations, I will only speak if I am mentioned in your message.\n" +
+                "I know about IcedTea, Red Hat, JDK and JMC bugs, and times/timezones.\n" +
+                "To get the description for an IcedTea bug, type \"PR<bugid>\" in the channel.\n" +
+                "To get the description for a Red Hat bug, type \"RH<bugid>\" or \"RHBZ<bugid>\" in the channel\n" +
+                "To get the description for an JDK bug, type \"JDK-<bugid>\" in the channel.\n" +
+                "To get the description for an JMC bug, type \"JMC-<bugid>\" in the channel.\n" +
+                "These are not case sensitive.\n" +
+                "If you type a time of day in the channel, I will repeat it in several relevant time zones.\n" +
+                "The time format that I recognize is: \"HH:mm[am/pm] (ZONE)\".\n" +
+                "If you do not specify am or pm, I will assume a 24-hour clock.\n" +
+                "ZONE should be the abbreviation for your current time zone, such as EDT or CEST.\n" +
+                "If you do not include a zone, I will make a guess based on what time zone I think you are in.\n";
+        for (String line: helpMsg.split("\n")) {
+            event.respondPrivateMessage(line);
+        }
     }
 }
